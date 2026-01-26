@@ -7,13 +7,13 @@ export default async function CoursesLayout({
   const { cid } = await params;
   return (
     <div id="wd-courses">
-      <h2>Courses {cid}</h2>
+      <h2>Course {cid}</h2>
       <hr />
       <table>
         <tbody>
           <tr>
             <td valign="top" width="200">
-              <CourseNavigation />{" "}
+              <CourseNavigation />
             </td>
             <td valign="top" width="100%">
               {children}

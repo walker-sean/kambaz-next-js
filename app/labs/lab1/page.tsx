@@ -300,11 +300,11 @@ export default function Lab1() {
         </form>
       </div>
       <h4>Anchor tag</h4>
-      Please
+      Please{" "}
       <a href="https://www.lipsum.com" id="wd-lipsum">
         click here
       </a>
-      to get dummy text
+      {" "}to get dummy text
       <br />
     </div>
   );
