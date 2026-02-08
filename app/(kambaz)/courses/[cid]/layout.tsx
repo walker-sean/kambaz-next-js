@@ -13,7 +13,6 @@ export default async function CoursesLayout({
         Course {cid}{" "}
       </h2>{" "}
       <hr />
-      <hr />
       <div className="d-flex">
         <div className="d-none d-md-block">
           <CourseNavigation />

@@ -9,7 +9,7 @@ export default function KambazNavigation() {
   return (
     <ListGroup
       className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2"
-      style={{ width: 120 }}
+      style={{ width: 110 }}
       id="wd-kambaz-navigation"
     >
       <ListGroupItem
@@ -57,6 +57,7 @@ export default function KambazNavigation() {
           Courses
         </Link>
       </ListGroupItem>
+      <br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link
           href="/calendar"
@@ -68,6 +69,7 @@ export default function KambazNavigation() {
           Calendar
         </Link>
       </ListGroupItem>
+      <br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link
           href="/inbox"
@@ -79,6 +81,7 @@ export default function KambazNavigation() {
           Inbox
         </Link>
       </ListGroupItem>
+      <br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link
           href="/labs"
