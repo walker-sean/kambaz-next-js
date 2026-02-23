@@ -1,3 +1,4 @@
+"use client";
 import {
   Button,
   Col,
@@ -9,15 +10,20 @@ import {
   InputGroup,
   Row,
 } from "react-bootstrap";
+import { assignments } from "@/app/(kambaz)/database";
+import { useParams } from "next/navigation";
 
 export default function AssignmentEditor() {
+  const { aid } = useParams();
+  const assignment = assignments.find((a) => a._id === aid);
+
   return (
     <Form className="w-75">
       <FormLabel htmlFor="wd-name">Assignment Name</FormLabel>
       <InputGroup className="mb-3">
         <FormControl
           id="wd-name"
-          defaultValue="A1 - ENV + HTML"
+          defaultValue={assignment?.title}
           placeholder="Enter assignment name..."
         />
       </InputGroup>
@@ -26,14 +32,7 @@ export default function AssignmentEditor() {
           as="textarea"
           id="wd-description"
           rows={8}
-          defaultValue="The assignment is available online. Submit a link to the landing page of
-        your Web application running on Vercel. The landing page should be the
-        Kambaz application with a link to the Lab exercises. Lab 1 should be the
-        landing page of the Lab exercises and should include the following: Your
-        full name and section Links to each of the lab assignments Link to the
-        Kambaz application Links to all relevant source code repositories The
-        Kambaz application should include a link to navigate back to the landing
-        page."
+          defaultValue={assignment?.description}
           placeholder="Enter assignment description..."
         />
       </InputGroup>
@@ -44,7 +43,7 @@ export default function AssignmentEditor() {
         <Col>
           <FormControl
             id="wd-points"
-            defaultValue={100}
+            defaultValue={assignment?.points}
             placeholder="Enter points..."
           />
         </Col>
@@ -54,8 +53,11 @@ export default function AssignmentEditor() {
           <FormLabel htmlFor="wd-assignment-group">Assignment Group</FormLabel>
         </Col>
         <Col>
-          <FormSelect id="wd-assignment-group" defaultValue="ASSIGNMENTS">
+          <FormSelect id="wd-assignment-group" defaultValue={assignment?.group}>
             <option value="ASSIGNMENTS">ASSIGNMENTS</option>
+            <option value="QUIZZES">QUIZZES</option>
+            <option value="PROJECTS">PROJECTS</option>
+            <option value="LAB_REPORTS">LAB REPORTS</option>
           </FormSelect>
         </Col>
       </Row>
@@ -64,7 +66,7 @@ export default function AssignmentEditor() {
           <FormLabel htmlFor="wd-display-type">Display Grade as</FormLabel>
         </Col>
         <Col>
-          <FormSelect id="wd-display-type" defaultValue="PERCENTAGE">
+          <FormSelect id="wd-display-type" defaultValue={assignment?.gradeType}>
             <option value="PERCENTAGE">Percentage</option>
             <option value="RAW_TOTAL">Raw Total</option>
             <option value="FRACTION">Fraction</option>
@@ -76,16 +78,42 @@ export default function AssignmentEditor() {
           <FormLabel htmlFor="wd-submission-type">Submission Type</FormLabel>
         </Col>
         <Col className="border p-3">
-          <FormSelect id="wd-submission-type" defaultValue="ONLINE">
+          <FormSelect
+            id="wd-submission-type"
+            defaultValue={assignment?.submissionType}
+          >
             <option value="ONLINE">Online</option>
             <option value="IN_PERSON">In person</option>
           </FormSelect>
-          <FormLabel htmlFor="wd-entry-options">Online Entry Options</FormLabel>
-
-          <FormCheck type="checkbox" label="Text Entry" />
-          <FormCheck type="checkbox" label="Website URL" />
-          <FormCheck type="checkbox" label="Media Recordings" />
-          <FormCheck type="checkbox" label="Student Annotation" />
+          {assignment?.submissionType === "ONLINE" && (
+            <>
+              <FormLabel htmlFor="wd-entry-options">
+                Online Entry Options
+              </FormLabel>
+              <FormCheck
+                type="checkbox"
+                defaultChecked={assignment?.onlineEntryOptions?.textEntry}
+                label="Text Entry"
+              />
+              <FormCheck
+                type="checkbox"
+                defaultChecked={assignment?.onlineEntryOptions?.websiteUrl}
+                label="Website URL"
+              />
+              <FormCheck
+                type="checkbox"
+                defaultChecked={assignment?.onlineEntryOptions?.mediaRecordings}
+                label="Media Recordings"
+              />
+              <FormCheck
+                type="checkbox"
+                defaultChecked={
+                  assignment?.onlineEntryOptions?.studentAnnotation
+                }
+                label="Student Annotation"
+              />
+            </>
+          )}
         </Col>
       </Row>
       <Row className="mb-5">
@@ -94,16 +122,28 @@ export default function AssignmentEditor() {
         </Col>
         <Col className="border p-3">
           <FormLabel htmlFor="wd-assign-to">Assign To</FormLabel>
-          <FormControl id="wd-assign-to" defaultValue="Everyone" />
+          <FormControl id="wd-assign-to" defaultValue={assignment?.assignTo} />
           <FormLabel htmlFor="wd-due">Due</FormLabel>
-          <FormControl id="wd-due" type="date" defaultValue="2026-05-13" />
+          <FormControl
+            id="wd-due"
+            type="date"
+            defaultValue={
+              assignment?.due
+                ? new Date(assignment.due).toISOString().split("T")[0]
+                : ""
+            }
+          />
           <Row>
             <Col>
               <FormLabel htmlFor="wd-available-from">Available From</FormLabel>
               <FormControl
                 id="wd-available-from"
                 type="date"
-                defaultValue="2026-05-06"
+                defaultValue={
+                  assignment
+                    ? new Date(assignment.available).toISOString().split("T")[0]
+                    : ""
+                }
               />
             </Col>
             <Col>
@@ -111,7 +151,11 @@ export default function AssignmentEditor() {
               <FormControl
                 id="wd-until"
                 type="date"
-                defaultValue="2026-05-20"
+                defaultValue={
+                  assignment
+                    ? new Date(assignment.until).toISOString().split("T")[0]
+                    : ""
+                }
               />
             </Col>
           </Row>
@@ -124,10 +168,16 @@ export default function AssignmentEditor() {
             variant="secondary"
             className="
           me-2"
+            href={`/courses/${assignment?.course}/assignments`}
           >
             Cancel
           </Button>
-          <Button variant="danger">Save</Button>
+          <Button
+            variant="danger"
+            href={`/courses/${assignment?.course}/assignments`}
+          >
+            Save
+          </Button>
         </Col>
       </Row>
     </Form>

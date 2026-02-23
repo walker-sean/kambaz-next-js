@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import {
   Button,
@@ -14,10 +15,17 @@ import { FaMagnifyingGlass, FaPlus } from "react-icons/fa6";
 import LessonControlButtons from "../modules/LessonControlButtons";
 import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import { LuNotebookText } from "react-icons/lu";
+import { assignments } from "../../../database";
+import { useParams } from "next/navigation";
 
-export default async function Assignments({}: Readonly<{
+export default function Assignments({}: Readonly<{
   params: Promise<{ cid: string }>;
 }>) {
+  const { cid } = useParams();
+  const courseAssignments = assignments.filter(
+    (assignment) => assignment.course === cid,
+  );
+
   return (
     <div id="wd-assignments">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -55,81 +63,38 @@ export default async function Assignments({}: Readonly<{
             ASSIGNMENTS <AssignmentHeaderControlButtons />
           </div>
           <ListGroup className="wd-lessons rounded-0">
-            <ListGroupItem className="wd-lesson p-3 ps-1">
-              <Row className="align-items-center">
-                <Col xs="auto">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <LuNotebookText className="me-2 fs-3 text-success" />
-                </Col>
-                <Col>
-                  <Link
-                    href={`assignments/A1`}
-                    className="wd-assignment-link text-decoration-none fw-bold text-dark"
-                  >
-                    A1 - ENV + HTML
-                  </Link>
-                  <p>
-                    <span className="text-danger">Multiple Modules</span> |{" "}
-                    <b>Not available until</b> May 6 at 12:00am |
-                    <br />
-                    <b>Due</b> May 13 at 11:59pm | 100 pts
-                  </p>
-                </Col>
-                <Col xs="auto">
-                  <LessonControlButtons />
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem className="wd-lesson p-3 ps-1">
-              <Row className="align-items-center">
-                <Col xs="auto">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <LuNotebookText className="me-2 fs-3 text-success" />
-                </Col>
-                <Col>
-                  <Link
-                    href={`assignments/A2`}
-                    className="wd-assignment-link text-decoration-none fw-bold text-dark"
-                  >
-                    A2 - CSS + BOOTSTRAP
-                  </Link>
-                  <p>
-                    <span className="text-danger">Multiple Modules</span> |{" "}
-                    <b>Not available until</b> May 13 at 12:00am |
-                    <br />
-                    <b>Due</b> May 20 at 11:59pm | 100 pts
-                  </p>
-                </Col>
-                <Col xs="auto">
-                  <LessonControlButtons />
-                </Col>
-              </Row>
-            </ListGroupItem>
-            <ListGroupItem className="wd-lesson p-3 ps-1">
-              <Row className="align-items-center">
-                <Col xs="auto">
-                  <BsGripVertical className="me-2 fs-3" />
-                  <LuNotebookText className="me-2 fs-3 text-success" />
-                </Col>
-                <Col>
-                  <Link
-                    href={`assignments/A3`}
-                    className="wd-assignment-link text-decoration-none fw-bold text-dark"
-                  >
-                    A3 - JAVASCRIPT + REACT
-                  </Link>
-                  <p>
-                    <span className="text-danger">Multiple Modules</span> |{" "}
-                    <b>Not available until</b> May 20 at 12:00am |
-                    <br />
-                    <b>Due</b> May 27 at 11:59pm | 100 pts
-                  </p>
-                </Col>
-                <Col xs="auto">
-                  <LessonControlButtons />
-                </Col>
-              </Row>
-            </ListGroupItem>
+            {courseAssignments.map((assignment) => (
+              <ListGroupItem
+                key={assignment._id}
+                className="wd-lesson p-3 ps-1"
+              >
+                <Row className="align-items-center">
+                  <Col xs="auto">
+                    <BsGripVertical className="me-2 fs-3" />
+                    <LuNotebookText className="me-2 fs-3 text-success" />
+                  </Col>
+                  <Col>
+                    <Link
+                      href={`assignments/${assignment._id}`}
+                      className="wd-assignment-link text-decoration-none fw-bold text-dark"
+                    >
+                      {assignment.title}
+                    </Link>
+                    <p>
+                      <span className="text-danger">Multiple Modules</span> |{" "}
+                      <b>Not available until</b>{" "}
+                      {new Date(assignment.available).toLocaleString()} |
+                      <br />
+                      <b>Due</b> {new Date(assignment.due).toLocaleString()} |{" "}
+                      {assignment.points} pts
+                    </p>
+                  </Col>
+                  <Col xs="auto">
+                    <LessonControlButtons />
+                  </Col>
+                </Row>
+              </ListGroupItem>
+            ))}
           </ListGroup>
         </ListGroupItem>
       </ListGroup>
