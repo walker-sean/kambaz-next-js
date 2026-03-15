@@ -7,27 +7,70 @@ import {
   InputGroup,
   ListGroup,
   ListGroupItem,
+  Modal,
   Row,
 } from "react-bootstrap";
 import InputGroupText from "react-bootstrap/esm/InputGroupText";
 import { BsGripVertical } from "react-icons/bs";
-import { FaMagnifyingGlass, FaPlus } from "react-icons/fa6";
+import { FaMagnifyingGlass, FaPlus, FaTrash } from "react-icons/fa6";
 import LessonControlButtons from "../modules/LessonControlButtons";
 import AssignmentHeaderControlButtons from "./AssignmentHeaderControlButtons";
 import { LuNotebookText } from "react-icons/lu";
-import { assignments } from "../../../database";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { deleteAssignment } from "../../assignments/reducer";
+import { useState } from "react";
 
-export default function Assignments({}: Readonly<{
-  params: Promise<{ cid: string }>;
-}>) {
+export default function Assignments() {
   const { cid } = useParams();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { assignments } = useSelector(
+    (state: RootState) => state.assignmentsReducer,
+  );
+  const { currentUser } = useSelector(
+    (state: RootState) => state.accountReducer,
+  );
+  const isFaculty = ["FACULTY", "ADMIN"].includes((currentUser as any)?.role);
   const courseAssignments = assignments.filter(
     (assignment) => assignment.course === cid,
   );
 
+  const [showModal, setShowModal] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedTitle, setSelectedTitle] = useState("");
+
+  const handleDeleteClick = (id: string, title: string) => {
+    setSelectedId(id);
+    setSelectedTitle(title);
+    setShowModal(true);
+  };
+
+  const handleConfirm = () => {
+    if (selectedId) dispatch(deleteAssignment(selectedId));
+    setShowModal(false);
+  };
+
   return (
     <div id="wd-assignments">
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Assignment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to remove {selectedTitle}?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleConfirm}>
+            Yes, Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <div className="d-flex justify-content-between align-items-center mb-3">
         <InputGroup className="w-50">
           <InputGroupText>
@@ -47,13 +90,19 @@ export default function Assignments({}: Readonly<{
             />{" "}
             Group
           </Button>
-          <Button variant="danger" id="wd-add-assignment">
-            <FaPlus
-              className="position-relative me-2"
-              style={{ bottom: "1px" }}
-            />{" "}
-            Assignment
-          </Button>
+          {isFaculty && (
+            <Button
+              variant="danger"
+              id="wd-add-assignment"
+              onClick={() => router.push(`/courses/${cid}/assignments/new`)}
+            >
+              <FaPlus
+                className="position-relative me-2"
+                style={{ bottom: "1px" }}
+              />{" "}
+              Assignment
+            </Button>
+          )}
         </div>
       </div>
       <ListGroup className="rounded-0" id="wd-modules">
@@ -90,6 +139,15 @@ export default function Assignments({}: Readonly<{
                     </p>
                   </Col>
                   <Col xs="auto">
+                    {isFaculty && (
+                      <FaTrash
+                        role="button"
+                        className="text-danger me-2"
+                        onClick={() =>
+                          handleDeleteClick(assignment._id, assignment.title)
+                        }
+                      />
+                    )}
                     <LessonControlButtons />
                   </Col>
                 </Row>
