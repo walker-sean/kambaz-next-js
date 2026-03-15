@@ -26,8 +26,7 @@ export default function AssignmentEditor() {
   const { currentUser } = useSelector(
     (state: RootState) => state.accountReducer,
   );
-  const isFaculty =
-    (currentUser as { role: string } | null)?.role === "FACULTY";
+  const isFaculty = ["FACULTY", "ADMIN"].includes((currentUser as any)?.role);
 
   const isNew = aid === "new";
   const existing = assignments.find((a) => a._id === aid);
