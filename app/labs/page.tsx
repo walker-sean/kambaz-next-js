@@ -24,6 +24,11 @@ export default function labs() {
             Lab 4: State
           </Link>
         </li>
+        <li className="nav-item">
+          <Link href="/labs/lab5" id="wd-lab5-link" className="nav-link">
+            Lab 5: REST
+          </Link>
+        </li>
       </ul>
     </div>
   );
