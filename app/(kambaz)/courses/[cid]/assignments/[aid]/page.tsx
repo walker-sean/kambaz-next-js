@@ -30,7 +30,7 @@ export default function AssignmentEditor() {
   const { currentUser } = useSelector(
     (state: RootState) => state.accountReducer,
   );
-  const isFaculty = ["FACULTY", "ADMIN"].includes((currentUser as any)?.role);
+  const isFaculty = ["FACULTY", "ADMIN"].includes(currentUser?.role ?? "");
 
   const isNew = aid === "new";
   const existing = assignments.find((a) => a._id === aid);
@@ -77,7 +77,7 @@ export default function AssignmentEditor() {
     if (isNew) {
       createAssignmentForCourse(cid as string, toSave);
     } else {
-      updateAssignment(assignment);
+      updateAssignment(assignment as { _id: string });
     }
     router.push(`/courses/${cid}/assignments`);
   };

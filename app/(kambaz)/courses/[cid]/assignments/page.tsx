@@ -33,7 +33,7 @@ export default function Assignments() {
   const { currentUser } = useSelector(
     (state: RootState) => state.accountReducer,
   );
-  const isFaculty = ["FACULTY", "ADMIN"].includes((currentUser as any)?.role);
+  const isFaculty = ["FACULTY", "ADMIN"].includes(currentUser?.role ?? "");
   const courseAssignments = assignments.filter(
     (assignment) => assignment.course === cid,
   );

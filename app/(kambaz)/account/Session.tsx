@@ -10,7 +10,7 @@ export default function Session({ children }: { children: React.ReactNode }) {
     try {
       const currentUser = await client.profile();
       dispatch(setCurrentUser(currentUser));
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
     }
     setPending(false);
