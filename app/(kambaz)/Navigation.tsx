@@ -44,7 +44,7 @@ export default function KambazNavigation() {
       </ListGroupItem>
       {links.map((link) => (
         <ListGroupItem
-          key={link.path}
+          key={crypto.randomUUID()}
           as={Link}
           href={link.path}
           className={`bg-black text-center border-0

@@ -15,42 +15,17 @@ export default function TOC() {
           Labs{" "}
         </NavLink>{" "}
       </NavItem>
-      <NavItem>
-        <NavLink
-          href="/labs/lab1"
-          as={Link}
-          className={`nav-link ${pathname.endsWith("lab1") ? "active" : ""}`}
-        >
-          Lab 1{" "}
-        </NavLink>{" "}
-      </NavItem>
-      <NavItem>
-        <NavLink
-          href="/labs/lab2"
-          as={Link}
-          className={`nav-link ${pathname.endsWith("lab2") ? "active" : ""}`}
-        >
-          Lab 2{" "}
-        </NavLink>{" "}
-      </NavItem>
-      <NavItem>
-        <NavLink
-          href="/labs/lab3"
-          as={Link}
-          className={`nav-link ${pathname.endsWith("lab3") ? "active" : ""}`}
-        >
-          Lab 3{" "}
-        </NavLink>{" "}
-      </NavItem>
-      <NavItem>
-        <NavLink
-          href="/labs/lab4"
-          as={Link}
-          className={`nav-link ${pathname.endsWith("lab4") ? "active" : ""}`}
-        >
-          Lab 4{" "}
-        </NavLink>{" "}
-      </NavItem>
+      {[1, 2, 3, 4, 5].map((n) => (
+        <NavItem key={n}>
+          <NavLink
+            href={`/labs/lab${n}`}
+            as={Link}
+            className={`nav-link ${pathname.endsWith(`lab${n}`) ? "active" : ""}`}
+          >
+            {`Lab ${n} `}
+          </NavLink>
+        </NavItem>
+      ))}
       <NavItem>
         <NavLink href="/" as={Link}>
           Kambaz{" "}

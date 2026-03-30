@@ -13,8 +13,12 @@ import {
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store";
-import { addAssignment, updateAssignment } from "../../../assignments/reducer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  createAssignmentForCourse,
+  findAssignmentById,
+  updateAssignment,
+} from "../client";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
@@ -71,9 +75,9 @@ export default function AssignmentEditor() {
       available: assignment.available ? `${assignment.available}T00:00` : "",
     };
     if (isNew) {
-      dispatch(addAssignment(toSave));
+      createAssignmentForCourse(cid as string, toSave);
     } else {
-      dispatch(updateAssignment(toSave));
+      updateAssignment(assignment);
     }
     router.push(`/courses/${cid}/assignments`);
   };
@@ -81,6 +85,18 @@ export default function AssignmentEditor() {
   const handleCancel = () => {
     router.push(`/courses/${cid}/assignments`);
   };
+
+  const fetchAssignment = async () => {
+    const assignment = await findAssignmentById(aid as string);
+    setAssignment(assignment);
+  };
+
+  useEffect(() => {
+    if (aid === "new") {
+      return;
+    }
+    fetchAssignment();
+  }, []);
 
   return (
     <Form className="w-75">

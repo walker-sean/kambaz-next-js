@@ -19,8 +19,9 @@ import { LuNotebookText } from "react-icons/lu";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
-import { deleteAssignment } from "../../assignments/reducer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { findAssignmentsForCourse, deleteAssignment } from "./client";
+import { setAssignments } from "../../assignments/reducer";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -47,10 +48,19 @@ export default function Assignments() {
     setShowModal(true);
   };
 
-  const handleConfirm = () => {
-    if (selectedId) dispatch(deleteAssignment(selectedId));
+  const handleConfirm = async () => {
+    if (selectedId) await deleteAssignment(selectedId);
     setShowModal(false);
   };
+
+  const fetchAssignments = async () => {
+    const assignments = await findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+
+  useEffect(() => {
+    fetchAssignments();
+  }, [showModal]);
 
   return (
     <div id="wd-assignments">
