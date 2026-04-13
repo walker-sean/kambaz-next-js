@@ -6,7 +6,7 @@ import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 import ModulesControls from "./ModulesControls";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/(kambaz)/store";
 import {
@@ -21,13 +21,13 @@ export default function Modules() {
   const [moduleName, setModuleName] = useState("");
   const { modules } = useSelector((state: RootState) => state.modulesReducer);
   const dispatch = useDispatch();
-  const fetchModules = async () => {
+  const fetchModules = useCallback(async () => {
     const modules = await client.findModulesForCourse(cid as string);
     dispatch(setModules(modules));
-  };
+  }, [cid, dispatch]);
   useEffect(() => {
     fetchModules();
-  }, []);
+  }, [fetchModules]);
   const onCreateModuleForCourse = async () => {
     if (!cid) return;
     const newModule = { name: moduleName, course: cid };
@@ -46,10 +46,7 @@ export default function Modules() {
   const onUpdateModule = async (module: any) => {
     if (!cid || Array.isArray(cid)) return;
     await client.updateModule(cid, module);
-    const newModules = modules.map((m: any) =>
-      m._id === module._id ? module : m,
-    );
-    dispatch(setModules(newModules));
+    fetchModules();
   };
 
   return (

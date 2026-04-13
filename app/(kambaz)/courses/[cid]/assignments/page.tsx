@@ -53,14 +53,13 @@ export default function Assignments() {
     setShowModal(false);
   };
 
-  const fetchAssignments = async () => {
-    const assignments = await findAssignmentsForCourse(cid as string);
-    dispatch(setAssignments(assignments));
-  };
-
   useEffect(() => {
+    const fetchAssignments = async () => {
+      const assignments = await findAssignmentsForCourse(cid as string);
+      dispatch(setAssignments(assignments));
+    };
     fetchAssignments();
-  }, [showModal]);
+  }, [cid, dispatch, showModal]);
 
   return (
     <div id="wd-assignments">
