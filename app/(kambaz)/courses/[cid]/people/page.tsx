@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 
 export default function PeoplePage() {
   const { cid } = useParams();
-  const [people, setPeople] = useState([]);
+  const [people, setPeople] = useState<{ _id: string }[]>([]);
 
   const fetchPeople = useCallback(() => {
     if (!cid || Array.isArray(cid)) {

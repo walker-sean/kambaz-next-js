@@ -78,7 +78,9 @@ export const updateModule = async (courseId: string, module: any) => {
   return data;
 };
 
-export const findUsersForCourse = async (courseId: string) => {
+export const findUsersForCourse = async (
+  courseId: string,
+): Promise<{ _id: string }[]> => {
   const response = await axios.get(`${COURSES_API}/${courseId}/users`);
   return response.data;
 };
