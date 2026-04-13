@@ -29,16 +29,15 @@ export default function Dashboard() {
   const { currentUser } = useSelector(
     (state: RootState) => state.accountReducer,
   );
-  const { enrollments } = useSelector(
-    (state: RootState) => state.enrollmentsReducer,
-  );
   const [showAllCourses, setShowAllCourses] = useState(false);
+  const [myCourses, setMyCourses] = useState<{ _id: string }[]>([]);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const courses = await client.findMyCourses();
         const allCourses = await client.fetchAllCourses();
+        setMyCourses(courses);
         dispatch(setCourses(showAllCourses ? allCourses : courses));
       } catch (error) {
         console.error(error);
@@ -70,10 +69,12 @@ export default function Dashboard() {
   };
   const onEnrollInCourse = async (courseId: string) => {
     await client.enrollUserInCourse(courseId);
+    setMyCourses((prev) => [...prev, { _id: courseId }]);
     dispatch(enroll({ userId, courseId }));
   };
   const onUnenrollFromCourse = async (courseId: string) => {
     await client.unenrollUserFromCourse(courseId);
+    setMyCourses((prev) => prev.filter((c) => c._id !== courseId));
     dispatch(unenroll({ userId, courseId }));
   };
   const onUpdateCourse = async () => {
@@ -193,9 +194,7 @@ export default function Dashboard() {
                   )}
                   {showAllCourses && (
                     <>
-                      {enrollments.some(
-                        (e) => e.user === userId && e.course === c._id,
-                      ) ? (
+                      {myCourses.some((course) => course._id === c._id) ? (
                         <Button
                           variant="danger"
                           size="sm"
