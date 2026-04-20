@@ -32,3 +32,9 @@ body * {
 .wd-lesson {
   border-left: 3px solid green !important;
 }
+.wd-quiz-edit-tabs .nav-link {
+  color: red;
+}
+.wd-quiz-edit-tabs .nav-link.active {
+  color: black;
+}
