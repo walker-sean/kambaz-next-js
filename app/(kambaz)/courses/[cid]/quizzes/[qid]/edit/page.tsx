@@ -6,6 +6,7 @@ import { Button, Tab, Tabs } from "react-bootstrap";
 import { FaBan } from "react-icons/fa6";
 import GreenCheckmark from "../../../modules/GreenCheckmark";
 import DetailsTab from "./DetailsTab";
+import QuestionsTab from "./QuestionsTab";
 
 export default function EditQuizPage() {
   const [quiz, setQuiz] = useState();
@@ -51,7 +52,9 @@ export default function EditQuizPage() {
           <Tab eventKey="details" title="Details">
             <DetailsTab quiz={quiz} setQuiz={setQuiz} />
           </Tab>
-          <Tab eventKey="questions" title="Questions"></Tab>
+          <Tab eventKey="questions" title="Questions">
+            <QuestionsTab quiz={quiz} setQuiz={setQuiz} />
+          </Tab>
         </Tabs>
         <div className="d-flex justify-content-center gap-2 mt-4">
           <Button variant="secondary" onClick={() => router.push(`..`)}>
