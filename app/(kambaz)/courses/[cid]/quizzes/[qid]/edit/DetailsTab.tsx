@@ -12,7 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../store";
 
-export default function DetailsTab({ quiz, setQuiz }) {
+export default function DetailsTab({ quiz, setQuiz }: { quiz: any; setQuiz: (q: any) => void }) {
   const { currentUser } = useSelector(
     (state: RootState) => state.accountReducer,
   );

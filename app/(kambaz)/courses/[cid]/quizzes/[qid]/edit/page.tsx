@@ -9,7 +9,7 @@ import DetailsTab from "./DetailsTab";
 import QuestionsTab from "./QuestionsTab";
 
 export default function EditQuizPage() {
-  const [quiz, setQuiz] = useState();
+  const [quiz, setQuiz] = useState<any>();
 
   const { qid } = useParams();
 
@@ -22,16 +22,24 @@ export default function EditQuizPage() {
   const router = useRouter();
 
   const onSave = () => {
-    updateQuiz(qid, quiz).then(() => router.push("."));
+    const questions = quiz.questions.map((question: any) => {
+      const { editing, ...rest } = question;
+      return rest;
+    });
+    updateQuiz(qid, { ...quiz, questions }).then(() => router.push("."));
   };
 
   const onPublishAndSave = () => {
-    updateQuiz(qid, { ...quiz, published: true }).then(() => router.push(".."));
+    const questions = quiz.questions.map((question: any) => {
+      const { editing, ...rest } = question;
+      return rest;
+    });
+    updateQuiz(qid, { ...quiz, published: true, questions }).then(() => router.push(".."));
   };
 
   const numPoints = () => {
     if (!quiz) return;
-    return quiz.questions.reduce((acc, current) => acc + current.points, 0);
+    return quiz.questions.reduce((acc: number, current: any) => acc + current.points, 0);
   };
 
   return (
@@ -60,11 +68,11 @@ export default function EditQuizPage() {
           <Button variant="secondary" onClick={() => router.push(`..`)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={onSave}>
+          <Button disabled={quiz.questions.some((q: any) => q.editing)} variant="danger" onClick={onSave}>
             Save
           </Button>
           {!quiz.published && (
-            <Button variant="success" onClick={onPublishAndSave}>
+            <Button disabled={quiz.questions.some((q: any) => q.editing)} variant="success" onClick={onPublishAndSave}>
               Publish and Save
             </Button>
           )}

@@ -51,6 +51,7 @@ export const deleteQuizQuestion = async (quizId: any, questionId: any) => {
 export const makeAttempt = async (quizId: any, attempt: any) => {
   const { data } = await axiosWithCredentials.post(
     `${QUIZZES_API}/${quizId}/attempts`,
+    attempt,
   );
   return data;
 };

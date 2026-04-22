@@ -3,7 +3,7 @@ import { RootState } from "@/app/(kambaz)/store";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { findQuizAttempts, findQuizById, updateQuiz } from "../client";
+import { findQuizAttempts, findLastQuizAttempt, findQuizById, updateQuiz } from "../client";
 import { Button, Col, Row } from "react-bootstrap";
 import { BiPencil } from "react-icons/bi";
 
@@ -13,25 +13,28 @@ export default function QuizView() {
   );
   const isFaculty = ["ADMIN", "FACULTY"].includes((currentUser as any)?.role);
 
-  const { qid } = useParams();
+  const { cid, qid } = useParams();
   const [quiz, setQuiz] = useState<any>();
-  const [attempts, setAttempts] = useState([]);
+  const [attempts, setAttempts] = useState<any[]>([]);
+  const [lastAttempt, setLastAttempt] = useState<any>(null);
 
   useEffect(() => {
     if (!qid || Array.isArray(qid)) return;
     findQuizById(qid).then((quiz) => setQuiz(quiz));
     findQuizAttempts(qid).then((attempts) => setAttempts(attempts));
+    findLastQuizAttempt(qid).then((attempt) => setLastAttempt(attempt));
   }, [qid]);
 
   const numPoints = () => {
     if (!quiz) return;
-    return quiz.questions.reduce((acc, question) => acc + question.points, 0);
+    return quiz.questions.reduce((acc: number, question: any) => acc + question.points, 0);
   };
 
   const router = useRouter();
 
   const canTake = () => {
-    return quiz.howManyAttempts > attempts.length;
+    if (!quiz.multipleAttempts && attempts.length >= 1) return false;
+    return attempts.length < quiz.howManyAttempts;
   };
 
   return (
@@ -190,17 +193,36 @@ export default function QuizView() {
             </Col>
           </Row>
         ) : (
-          <Row className="justify-content-center mt-4">
-            <Col xs="auto">
-              <Button
-                variant="danger"
-                disabled={!canTake()}
-                onClick={() => router.push(`${qid}/take`)}
-              >
-                Start
-              </Button>
-            </Col>
-          </Row>
+          <div className="mt-4">
+            {lastAttempt && (
+              <div className="mb-3 p-3 border rounded">
+                <p className="mb-1">Score: {lastAttempt.score} / {numPoints()}</p>
+                <p className="mb-1">Attempt {lastAttempt.attemptNumber} of {quiz.howManyAttempts}</p>
+                <p className="mb-2">{new Date(lastAttempt.submittedAt).toLocaleString()}</p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => router.push(`/courses/${cid}/quizzes/${qid}/results`)}
+                >
+                  View Answers
+                </Button>
+              </div>
+            )}
+            <Row className="justify-content-center">
+              <Col xs="auto">
+                {canTake() ? (
+                  <Button
+                    variant="danger"
+                    onClick={() => router.push(`/courses/${cid}/quizzes/${qid}/take`)}
+                  >
+                    {lastAttempt ? "Retake Quiz" : "Start Quiz"}
+                  </Button>
+                ) : (
+                  <p className="text-muted fw-bold">You have used all {quiz.howManyAttempts} attempt{quiz.howManyAttempts !== 1 ? "s" : ""}.</p>
+                )}
+              </Col>
+            </Row>
+          </div>
         )}
       </div>
     )

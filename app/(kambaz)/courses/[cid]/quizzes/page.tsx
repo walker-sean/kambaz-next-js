@@ -37,9 +37,9 @@ export default function QuizList() {
     (state: RootState) => state.accountReducer,
   );
 
-  const [quizzes, setQuizzes] = useState([]);
-  const [attempts, setAttempts] = useState([]);
-  const [quizToDelete, setQuizToDelete] = useState();
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [attempts, setAttempts] = useState<any[]>([]);
+  const [quizToDelete, setQuizToDelete] = useState<any>();
 
   const fetchQuizzes = useCallback(async () => {
     if (!cid || Array.isArray(cid)) return;
@@ -62,12 +62,12 @@ export default function QuizList() {
     fetchAttempts();
   }, [cid]);
 
-  const lastQuizAttemptScore = (quizId) => {
-    const quizAttempts = attempts.filter((attempt) => attempt.quiz === quizId);
+  const lastQuizAttemptScore = (quizId: string) => {
+    const quizAttempts = attempts.filter((attempt: any) => attempt.quiz === quizId);
     if (quizAttempts.length === 0) return;
-    const latestAttempt = attempts.reduce(
-      (acc, current) => (current.submittedAt > acc.submittedAt ? current : acc),
-      attempts[0],
+    const latestAttempt = quizAttempts.reduce(
+      (acc: any, current: any) => (current.attemptNumber > acc.attemptNumber ? current : acc),
+      quizAttempts[0],
     );
     return latestAttempt.score;
   };
@@ -87,7 +87,7 @@ export default function QuizList() {
     router.push(`/courses/${cid}/quizzes/${newQuiz._id}/edit`);
   };
 
-  const quizAvailability = (quiz) => {
+  const quizAvailability = (quiz: any) => {
     const now = new Date();
     const untilDate = new Date(quiz.untilDate);
     const availableDate = new Date(quiz.availableDate);
@@ -100,11 +100,11 @@ export default function QuizList() {
     return `Not available until ${availableDate.toLocaleString()}`;
   };
 
-  const quizTotalPoints = (quiz) => {
-    return quiz.questions.reduce((acc, question) => acc + question.points, 0);
+  const quizTotalPoints = (quiz: any) => {
+    return quiz.questions.reduce((acc: number, question: any) => acc + question.points, 0);
   };
 
-  const togglePublished = async (quiz) => {
+  const togglePublished = async (quiz: any) => {
     await updateQuiz(quiz._id, { ...quiz, published: !quiz.published });
     await fetchQuizzes();
   };
@@ -167,7 +167,7 @@ export default function QuizList() {
                 {isFaculty && 'Use the "+ Quiz" button above to create one.'}
               </div>
             ) : (
-              quizzes.map((quiz) => (
+              quizzes.map((quiz: any) => (
                 <ListGroupItem key={quiz._id} className="wd-lesson p-3 ps-1">
                   <Row className="align-items-center">
                     <Col xs="auto">

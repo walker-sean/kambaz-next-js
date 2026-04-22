@@ -19,7 +19,7 @@ export default function QuizControlButtons({
 }: {
   openDeleteModal: () => void;
   quiz: any;
-  togglePublished: (quiz) => void;
+  togglePublished: (quiz: any) => void;
 }) {
   const CustomToggle = React.forwardRef<
     HTMLSpanElement,
