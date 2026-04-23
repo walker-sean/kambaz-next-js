@@ -44,7 +44,7 @@ export default function QuizList() {
   const fetchQuizzes = useCallback(async () => {
     if (!cid || Array.isArray(cid)) return;
     findQuizzesForCourse(cid).then((quizzes) => {
-      setQuizzes(quizzes);
+      setQuizzes(quizzes.sort((a: any, b: any) => new Date(b.availableDate).getTime() - new Date(a.availableDate).getTime()));
     });
   }, [cid]);
 
