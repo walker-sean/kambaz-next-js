@@ -32,9 +32,15 @@ export default function QuizView() {
 
   const router = useRouter();
 
-  const canTake = () => {
-    if (!quiz.multipleAttempts && attempts.length >= 1) return false;
-    return attempts.length < quiz.howManyAttempts;
+  const cantTakeReason = (): string | null => {
+    if (!quiz.published) return "Quiz is not published.";
+    if (new Date() < new Date(quiz.availableDate)) return "Quiz is not yet available.";
+    if (new Date() > new Date(quiz.untilDate)) return "Quiz is no longer available.";
+    if (!quiz.multipleAttempts && attempts.length >= 1)
+      return `You have used all 1 attempt.`;
+    if (attempts.length >= quiz.howManyAttempts)
+      return `You have used all ${quiz.howManyAttempts} attempt${quiz.howManyAttempts !== 1 ? "s" : ""}.`;
+    return null;
   };
 
   return (
@@ -78,7 +84,9 @@ export default function QuizView() {
             Time Limit
           </Col>
           <Col xs={6} className="text-start">
-            {quiz.timeLimit} minutes
+            {quiz.timeLimit > 0
+              ? `${quiz.timeLimit} minutes`
+              : "No Time Limit"}
           </Col>
         </Row>
         <Row className="justify-content-between">
@@ -196,6 +204,7 @@ export default function QuizView() {
           <div className="mt-4">
             {lastAttempt && (
               <div className="mb-3 p-3 border rounded">
+                <h5 className="mb-2">Your Last Attempt</h5>
                 <p className="mb-1">Score: {lastAttempt.score} / {numPoints()}</p>
                 <p className="mb-1">Attempt {lastAttempt.attemptNumber} of {quiz.howManyAttempts}</p>
                 <p className="mb-2">{new Date(lastAttempt.submittedAt).toLocaleString()}</p>
@@ -210,15 +219,15 @@ export default function QuizView() {
             )}
             <Row className="justify-content-center">
               <Col xs="auto">
-                {canTake() ? (
+                {cantTakeReason() ? (
+                  <p className="text-muted fw-bold">{cantTakeReason()}</p>
+                ) : (
                   <Button
                     variant="danger"
                     onClick={() => router.push(`/courses/${cid}/quizzes/${qid}/take`)}
                   >
                     {lastAttempt ? "Retake Quiz" : "Start Quiz"}
                   </Button>
-                ) : (
-                  <p className="text-muted fw-bold">You have used all {quiz.howManyAttempts} attempt{quiz.howManyAttempts !== 1 ? "s" : ""}.</p>
                 )}
               </Col>
             </Row>

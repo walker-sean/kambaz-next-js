@@ -86,7 +86,7 @@ export default function QuestionsTab({quiz, setQuiz}: {quiz: any; setQuiz: (q: a
                     question: "",
                     type: "MULTIPLE_CHOICE",
                     points: 1,
-                    choices: [{ text: "", isCorrect: true }, { text: "", isCorrect: false }],
+                    choices: [{ text: "Choice 1", isCorrect: true }, { text: "Choice 2", isCorrect: false }],
                     correctAnswer: null,
                     correctResponses: [],
                     editing: true

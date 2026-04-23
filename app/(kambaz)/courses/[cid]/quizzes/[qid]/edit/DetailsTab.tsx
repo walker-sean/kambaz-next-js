@@ -154,19 +154,36 @@ export default function DetailsTab({ quiz, setQuiz }: { quiz: any; setQuiz: (q: 
           </Col>
         </Row>
 
-        <Row className="mb-3">
+        <Row className="mb-3 align-items-center">
           <Col className="d-flex justify-content-end">
-            <FormLabel htmlFor="wd-time-limit">Time Limit (minutes)</FormLabel>
+            <FormCheck
+              type="checkbox"
+              id="wd-time-limit-toggle"
+              checked={quiz.timeLimit > 0}
+              onChange={(e) =>
+                setQuiz({
+                  ...quiz,
+                  timeLimit: e.target.checked ? 20 : 0,
+                })
+              }
+              label="Time Limit"
+            />
           </Col>
           <Col>
-            <FormControl
-              id="wd-time-limit"
-              type="number"
-              value={quiz.timeLimit}
-              onChange={(e) =>
-                setQuiz({ ...quiz, timeLimit: Number(e.target.value) })
-              }
-            />
+            {quiz.timeLimit > 0 && (
+              <div className="d-flex align-items-center gap-2">
+                <FormControl
+                  id="wd-time-limit"
+                  type="number"
+                  value={quiz.timeLimit}
+                  onChange={(e) =>
+                    setQuiz({ ...quiz, timeLimit: Number(e.target.value) })
+                  }
+                  style={{ width: "100px" }}
+                />
+                <span>Minutes</span>
+              </div>
+            )}
           </Col>
         </Row>
 

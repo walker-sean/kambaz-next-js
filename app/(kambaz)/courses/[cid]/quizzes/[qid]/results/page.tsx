@@ -5,10 +5,14 @@ import { useParams, useRouter } from "next/navigation";
 import { Button } from "react-bootstrap";
 import { FaBan } from "react-icons/fa6";
 import GreenCheckmark from "../../../modules/GreenCheckmark";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../store";
 
 export default function QuizResults() {
   const { cid, qid } = useParams();
   const router = useRouter();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const isFaculty = ["ADMIN", "FACULTY"].includes(currentUser?.role ?? "");
 
   const [quiz, setQuiz] = useState<any>(null);
   const [attempt, setAttempt] = useState<any>(null);
@@ -77,7 +81,7 @@ export default function QuizResults() {
                 const selected = getResponse(question._id) === choice._id;
                 return (
                   <div key={choice._id} className="ps-3 d-flex align-items-center gap-1">
-                    {selected && correct ? <GreenCheckmark /> : selected && !correct ? <FaBan className="text-danger" /> : !selected && choice.isCorrect && !correct ? <GreenCheckmark /> : <span className="me-3" />}
+                    {selected && correct ? <GreenCheckmark /> : selected && !correct ? <FaBan className="text-danger" /> : !selected && choice.isCorrect && !correct && isFaculty ? <GreenCheckmark /> : <span className="me-3" />}
                     {selected ? <><strong>{choice.text}</strong> (your choice)</> : choice.text}
                   </div>
                 );
@@ -85,13 +89,13 @@ export default function QuizResults() {
             {question.type === "TRUE_OR_FALSE" && (
               <div className="ps-3">
                 Your answer: <strong>{getResponse(question._id) === true ? "True" : getResponse(question._id) === false ? "False" : "No answer"}</strong>
-                {" | "}Correct: <strong>{question.correctAnswer ? "True" : "False"}</strong>
+                {isFaculty && <>{" | "}Correct: <strong>{question.correctAnswer ? "True" : "False"}</strong></>}
               </div>
             )}
             {question.type === "FILL_IN_THE_BLANK" && (
               <div className="ps-3">
                 Your answer: <strong>{getResponse(question._id) || "(blank)"}</strong>
-                {" | "}Accepted: <strong>{question.correctResponses?.join(", ")}</strong>
+                {isFaculty && <>{" | "}Accepted: <strong>{question.correctResponses?.join(", ")}</strong></>}
               </div>
             )}
           </div>
